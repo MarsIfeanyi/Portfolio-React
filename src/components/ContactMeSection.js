@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { useFormik } from "formik";
 import {
   Box,
@@ -12,19 +12,32 @@ import {
   Textarea,
   VStack,
 } from "@chakra-ui/react";
-import * as Yup from 'yup';
+import * as Yup from "yup";
 import FullScreenSection from "./FullScreenSection";
 import useSubmit from "../hooks/useSubmit";
-import {useAlertContext} from "../context/alertContext";
+import { useAlertContext } from "../context/alertContext";
 
 const LandingSection = () => {
-  const {isLoading, response, submit} = useSubmit();
+  const { isLoading, response, submit } = useSubmit();
   const { onOpen } = useAlertContext();
 
   const formik = useFormik({
-    initialValues: {},
+    initialValues: {
+      firstName: "",
+      email: "",
+      type: "",
+      comment: "",
+    },
     onSubmit: (values) => {},
-    validationSchema: Yup.object({}),
+
+    validationSchema: Yup.object({
+      firstName: Yup.string().required("Required"),
+      email: Yup.string()
+        .email("Please enter valid email")
+        .required("Required"),
+      type: Yup.string().required("Required"),
+      comment: Yup.string().required("Required"),
+    }),
   });
 
   return (
@@ -46,6 +59,7 @@ const LandingSection = () => {
                 <Input
                   id="firstName"
                   name="firstName"
+                  value={formik.getFieldProps}
                 />
                 <FormErrorMessage></FormErrorMessage>
               </FormControl>
@@ -55,6 +69,7 @@ const LandingSection = () => {
                   id="email"
                   name="email"
                   type="email"
+                  value={formik.getFieldProps}
                 />
                 <FormErrorMessage></FormErrorMessage>
               </FormControl>
@@ -70,11 +85,7 @@ const LandingSection = () => {
               </FormControl>
               <FormControl isInvalid={false}>
                 <FormLabel htmlFor="comment">Your message</FormLabel>
-                <Textarea
-                  id="comment"
-                  name="comment"
-                  height={250}
-                />
+                <Textarea id="comment" name="comment" height={250} />
                 <FormErrorMessage></FormErrorMessage>
               </FormControl>
               <Button type="submit" colorScheme="purple" width="full">
